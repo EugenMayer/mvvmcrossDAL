@@ -5,3 +5,4 @@ It is a centralized storage-layer implementation which is not there for persiste
  - ensures that remotely fetched entities keep the same reference ( in terms of c# reference ) in the storage. This way bindings work across different views
  - same entities always have same references
  - ensures updates are merged in the DAL and updates the references
+ - ensure that nested entities work out ( using namespaces for nesting )
