@@ -1,9 +1,0 @@
-/Users/eugen.mayer/Development/projects/xamarin/reservix/MvvmCrossDAL/obj/Debug/.NETPortable,Version=v4.5,Profile=Profile78.AssemblyAttribute.cs
-/Users/eugen.mayer/Development/projects/xamarin/reservix/MvvmCrossDAL/bin/Debug/MvvmCrossDAL.dll.mdb
-/Users/eugen.mayer/Development/projects/xamarin/reservix/MvvmCrossDAL/bin/Debug/MvvmCrossDAL.dll
-/Users/eugen.mayer/Development/projects/xamarin/reservix/MvvmCrossDAL/obj/Debug/MvvmCrossDAL.dll
-/Users/eugen.mayer/Development/projects/xamarin/reservix/MvvmCrossDAL/obj/Debug/MvvmCrossDAL.dll.mdb
-/Users/eugen.mayer/Development/projects/xamarin/reservix/MvvmCrossDAL/bin/Debug/Cirrious.CrossCore.dll
-/Users/eugen.mayer/Development/projects/xamarin/reservix/MvvmCrossDAL/bin/Debug/Cirrious.CrossCore.dll.mdb
-/Users/eugen.mayer/Development/projects/xamarin/reservix/MvvmCrossDAL/bin/Debug/Cirrious.MvvmCross.dll
-/Users/eugen.mayer/Development/projects/xamarin/reservix/MvvmCrossDAL/bin/Debug/Cirrious.MvvmCross.dll.mdb
