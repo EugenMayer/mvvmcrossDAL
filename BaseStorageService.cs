@@ -212,12 +212,22 @@ namespace Cirrious.CrossCore.MvvmCrossDAL
 
         private TModel StorageAdd(string id, TModel item, string storageNamespace = "_default_")
         {
+            // This is a merge
             if (_storage[storageNamespace].ContainsKey(id)) { // the item was in the storage already. Should be in 100% of all cases, since it hase been loaded before
                 var properties = item.GetType().GetRuntimeProperties();
                 foreach (var prop in properties) {
                     if (prop.CanWrite) {
-                        //TODO: only do this if the property actuall changed
-                        prop.SetValue(_storage[storageNamespace][item.Id], prop.GetValue(item));
+                        // This is a more complex merge were we want to avoid calling the setters to often ( due to the events bound to them .. RaisePropertyChanged)
+                        // But also we dont want to "Downgrade" fully populated models in the storage with updated, but only partially loaded models
+                        // specificly this meens, if values in the model, which is about to be merged with the current instance in the storage, are null
+                        // we assume that this values are not populated and not really "empty in the backend". In the case that we load a model initially
+                        // the value will be null anyway, since this is the default. We just do not support the edge case where a field is first not null, and then later on is updated to null again, instead of an empty list or similar
+                        // TODO: the edge-case can lead to errors and needs to be handled somehow later on. We basically currently cannot differ between a null for "empty in the backend" and null "not part of the response in the DTO"
+                        if (prop.GetValue(item) != null && // this protects us for invalidating models which have been first loaded fully and then are updated by partial populated models ( often when stuff is nested, fields are skipped )
+                            (prop.GetValue(_storage[storageNamespace][item.Id]) == null || // If the current value is null, skip the value comparision - we set anyway
+                            !prop.GetValue(_storage[storageNamespace][item.Id]).Equals(prop.GetValue(item)))) { // only update the value if the value actually has been changed
+                            prop.SetValue(_storage[storageNamespace][item.Id], prop.GetValue(item));
+                        }
                     }
                 }
                 return _storage[storageNamespace][id];
