@@ -36,7 +36,6 @@
     <Compile Include="BaseStorageService.cs" />
     <Compile Include="IStorageAccess.cs" />
     <Compile Include="BaseModel.cs" />
-    <Compile Include="Utils\IModelChangedNotify.cs" />
     <Compile Include="Utils\ModelChangedEvent.cs" />
     <Compile Include="Examples\GenreService.cs" />
     <Compile Include="Examples\Models\Genre.cs" />

@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Cirrious.CrossCore.MvvmCrossDAL
 {
-    public abstract class BaseStorageService<TModel, TGetOptions, TCreateOptions,TUpdateOptions>:IStorageAccess<TModel,TGetOptions>, IModelChangedNotify
+    public abstract class BaseStorageService<TModel, TGetOptions, TCreateOptions,TUpdateOptions>: IStorageAccess<TModel,TGetOptions>
         where TModel:BaseModel, new()
         where TGetOptions: new()
         where TUpdateOptions:TGetOptions, new()
@@ -126,6 +126,7 @@ namespace Cirrious.CrossCore.MvvmCrossDAL
                     DeleteElement(element.Value, new TGetOptions());
                 }
                 _storage[storageNamespace].Clear();
+                TriggerModelChanged(null, ModelChangeOperation.DeleteAll);
             }
             return true;
         }
@@ -230,10 +231,12 @@ namespace Cirrious.CrossCore.MvvmCrossDAL
                         }
                     }
                 }
+                TriggerModelChanged(item, ModelChangeOperation.Update);
                 return _storage[storageNamespace][id];
             }
             // else item was not in the storage befor, put it in there
             _storage[storageNamespace].Add(item.Id, item);
+            TriggerModelChanged(item, ModelChangeOperation.Add);
             return item;
         }
 
@@ -242,6 +245,7 @@ namespace Cirrious.CrossCore.MvvmCrossDAL
             if (_storage[storageNamespace].ContainsKey(id)) { // the item was in the storage already. Should be in 100% of all cases, since it hase been loaded before
                 _storage[storageNamespace].Remove(id);
             }
+            TriggerModelChanged(item, ModelChangeOperation.Delete);
         }
 
         private List<TModel> StorageReturnAll(string storageNamespace = "_default_")

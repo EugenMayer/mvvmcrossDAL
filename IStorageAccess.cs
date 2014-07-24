@@ -6,6 +6,8 @@ namespace Cirrious.CrossCore.MvvmCrossDAL
 {
     public interface IStorageAccess<TModel,TGetOptions>
     {
+        event ModelChangedEventHandler ModelChanged;
+
         TModel Find(string id);
 
         TModel Find(string id, TGetOptions options);

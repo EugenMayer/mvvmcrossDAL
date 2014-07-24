@@ -6,8 +6,9 @@ namespace Cirrious.CrossCore.MvvmCrossDAL
     public enum ModelChangeOperation
     {
         Add,
-        New,
-        Delete
+        Update,
+        Delete,
+        DeleteAll
     }
 
     public class ModelChangedEventArgs: EventArgs
@@ -25,7 +26,6 @@ namespace Cirrious.CrossCore.MvvmCrossDAL
             get {
                 return _newModel;
             }
-
         }
 
         public ModelChangeOperation Operation {
