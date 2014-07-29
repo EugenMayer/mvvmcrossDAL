@@ -89,7 +89,11 @@ namespace Cirrious.CrossCore.MvvmCrossDAL
             return StorageReturnAll(storageNamespace);
         }
 
-        public TModel Save(TModel item)
+        /**
+         * Stores the model in the DAL layer respectivly merges if an entity is already present
+         * this does NOT trigger any backend save
+         */
+        public TModel Save(TModel item, bool forceOverride = false)
         {
             if (IsUnsavedModel(item)) {
                 TCreateOptions options = new TCreateOptions();
@@ -98,7 +102,7 @@ namespace Cirrious.CrossCore.MvvmCrossDAL
                 item.Id = "";
                 TModel savedItem = CreateElement(item, ref options);
                 if (ValidateModelId(savedItem)) { // error case
-                    return AddToStorage(savedItem, StorageInitializeNamespace(options));
+                    return AddToStorage(savedItem, StorageInitializeNamespace(options), forceOverride);
                 }
                 // else something is wrong with the model ID,
                 return default(TModel);
@@ -112,7 +116,7 @@ namespace Cirrious.CrossCore.MvvmCrossDAL
                         return default(TModel);
                     }
 
-                    return AddToStorage(item, StorageInitializeNamespace(options));
+                    return AddToStorage(item, StorageInitializeNamespace(options), forceOverride);
                 }
             }
             // If the backend was able to update it, update it to in our storage
@@ -180,7 +184,7 @@ namespace Cirrious.CrossCore.MvvmCrossDAL
             return "_default_";
         }
 
-        public TModel AddToStorage(TModel item)
+        public TModel AddToStorage(TModel item, bool forceOverride = false)
         {
             return AddToStorage(item, GetNameSpaceFromModel(item));
         }
@@ -195,10 +199,10 @@ namespace Cirrious.CrossCore.MvvmCrossDAL
          * 
          * @see CartService
          */
-        protected virtual TModel AddToStorage(TModel item, string storageNamespace)
+        protected virtual TModel AddToStorage(TModel item, string storageNamespace, bool forceOverride = false)
         {
             StorageInitializeNamespace(storageNamespace);
-            return StorageAdd(item.Id, item, storageNamespace);
+            return StorageAdd(item.Id, item, storageNamespace, forceOverride);
         }
 
         protected void DeleteFromStorage(TModel item)
@@ -211,7 +215,7 @@ namespace Cirrious.CrossCore.MvvmCrossDAL
             StorageRemove(item.Id, item, storageNamespace);
         }
 
-        private TModel StorageAdd(string id, TModel item, string storageNamespace = "_default_")
+        private TModel StorageAdd(string id, TModel item, string storageNamespace = "_default_", bool forceOverride = false)
         {
             // This is a merge
             if (_storage[storageNamespace].ContainsKey(id)) { // the item was in the storage already. Should be in 100% of all cases, since it hase been loaded before
@@ -224,7 +228,7 @@ namespace Cirrious.CrossCore.MvvmCrossDAL
                         // we assume that this values are not populated and not really "empty in the backend". In the case that we load a model initially
                         // the value will be null anyway, since this is the default. We just do not support the edge case where a field is first not null, and then later on is updated to null again, instead of an empty list or similar
                         // TODO: the edge-case can lead to errors and needs to be handled somehow later on. We basically currently cannot differ between a null for "empty in the backend" and null "not part of the response in the DTO"
-                        if (prop.GetValue(item) != null && // this protects us for invalidating models which have been first loaded fully and then are updated by partial populated models ( often when stuff is nested, fields are skipped )
+                        if ((prop.GetValue(item) != null || forceOverride) && // this protects us for invalidating models which have been first loaded fully and then are updated by partial populated models ( often when stuff is nested, fields are skipped )
                             (prop.GetValue(_storage[storageNamespace][item.Id]) == null || // If the current value is null, skip the value comparision - we set anyway
                             !prop.GetValue(_storage[storageNamespace][item.Id]).Equals(prop.GetValue(item)))) { // only update the value if the value actually has been changed
                             prop.SetValue(_storage[storageNamespace][item.Id], prop.GetValue(item));
