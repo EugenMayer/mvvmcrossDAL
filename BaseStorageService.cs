@@ -28,7 +28,7 @@ namespace Cirrious.CrossCore.MvvmCrossDAL
         protected abstract bool UpdateElement(TModel item, ref TUpdateOptions options);
 
         //protected abstract bool DeleteElement(TModel item, ref TDeleteOptions options);
-        protected bool DeleteElement(TModel item, TGetOptions options)
+        protected virtual bool DeleteElement(TModel item, TGetOptions options)
         {
             // TODO: make this method abstract and let all services implement it specificaly
             return true;
