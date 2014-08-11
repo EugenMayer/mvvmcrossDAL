@@ -151,6 +151,19 @@ namespace Cirrious.CrossCore.MvvmCrossDAL
             return model;
         }
 
+        /**
+         * Use this with care! You are accessing the storage-layer dircetly, without notifying the persistance layer
+         * use this for read-only opretation were you want to avoid p-layer access / overhead!!
+         */
+        public TModel LoadFromStorage(string Id, string storageNamespace = "_default_")
+        {
+            if (_storage.ContainsKey(storageNamespace) && _storage[storageNamespace].ContainsKey(Id)) {
+                return _storage[storageNamespace][Id];
+            }
+            // else
+            return default (TModel);
+        }
+
         private string GetNextUnsavedKey()
         {
             var uuid = System.Guid.NewGuid();
